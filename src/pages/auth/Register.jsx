@@ -7,7 +7,6 @@ function Register() {
     name: '',
     email: '',
     password: '',
-    password_confirmation: '',
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -21,7 +20,7 @@ function Register() {
     e.preventDefault();
     try {
       await register(formData);
-      // After successful registration, redirect to email verification
+      // Rediriger vers la page de vérification de l'email
       navigate('/verify-email', { state: { email: formData.email } });
     } catch (error) {
       setError(error.response?.data?.message || 'Une erreur est survenue');
@@ -70,20 +69,9 @@ function Register() {
                 name="password"
                 type="password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm"
                 placeholder="Mot de passe"
                 value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <input
-                name="password_confirmation"
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm"
-                placeholder="Confirmer le mot de passe"
-                value={formData.password_confirmation}
                 onChange={handleChange}
               />
             </div>

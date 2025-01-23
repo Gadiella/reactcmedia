@@ -1,165 +1,154 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { artistService } from '../../services/api';
+import axios from 'axios';
 
-function ArtistForm() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    country: '',
-    image: null,
-  });
+const AddArtistForm = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    if (id) {
-      loadArtist();
-    }
-  }, [id]);
+    const [artist, setArtist] = useState({
+        name: '',
+        country: '',
+        category: '',
+        vote_type: 'free',
+        image: null,
+    });
 
-  const loadArtist = async () => {
-    try {
-      const response = await artistService.getOne(id);
-      setFormData(response.data);
-    } catch (error) {
-      setError('Erreur lors du chargement de l\'artiste');
-    }
-  };
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === 'image') {
-      setFormData({ ...formData, image: files[0] });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      const formDataToSend = new FormData();
-      Object.keys(formData).forEach(key => {
-        if (formData[key] !== null) {
-          formDataToSend.append(key, formData[key]);
+    useEffect(() => {
+        if (id) {
+            axios.get(`http://127.0.0.1:8000/api/artists/${id}`)
+                .then(response => {
+                    setArtist(response.data);
+                })
+                .catch(() => {
+                    setError('Erreur lors du chargement des données');
+                });
         }
-      });
+    }, [id]);
 
-      if (id) {
-        await artistService.update(id, formDataToSend);
-      } else {
-        await artistService.create(formDataToSend);
-      }
-      navigate('/admin/artists');
-    } catch (error) {
-      setError(error.response?.data?.message || 'Une erreur est survenue');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setArtist({ ...artist, [name]: value });
+    };
 
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">
-        {id ? 'Modifier l\'artiste' : 'Ajouter un artiste'}
-      </h1>
+    const handleFileChange = (e) => {
+        setArtist({ ...artist, image: e.target.files[0] });
+    };
 
-      <form onSubmit={handleSubmit} className="max-w-lg">
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-            {error}
-          </div>
-        )}
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setMessage('');
+        setError('');
 
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Nom
-          </label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
+        const formData = new FormData();
+        formData.append('name', artist.name);
+        formData.append('country', artist.country);
+        formData.append('category', artist.category);
+        formData.append('vote_type', artist.vote_type);
+        if (artist.image instanceof File) {
+            formData.append('image', artist.image);
+        }
+
+        try {
+            if (id) {
+                await axios.post(`http://127.0.0.1:8000/api/artists/${id}`, formData);
+                setMessage('Artiste mis à jour avec succès');
+            } else {
+                await axios.post('http://127.0.0.1:8000/api/artists', formData);
+                setMessage('Artiste ajouté avec succès');
+            }
+
+            setTimeout(() => {
+                navigate('/admin/artists');
+            }, 2000);
+
+        } catch (error) {
+            setError(error.response?.data?.message || 'Une erreur est survenue.');
+        }
+    };
+
+    return (
+        <div className="max-w-lg mx-auto p-6 mt-10">
+            <h2 className="text-2xl font-bold text-center text-gray-700 mb-4">
+                {id ? 'Modifier un artiste' : 'Ajouter un artiste'}
+            </h2>
+
+            {message && <p className="text-green-600 text-center mb-4">{message}</p>}
+            {error && <p className="text-red-600 text-center mb-4">{error}</p>}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                    <label className="block text-gray-700 font-medium">Nom:</label>
+                    <input 
+                        type="text" 
+                        name="name" 
+                        value={artist.name} 
+                        onChange={handleChange} 
+                        required 
+                        className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-gray-700 font-medium">Pays:</label>
+                    <input 
+                        type="text" 
+                        name="country" 
+                        value={artist.country} 
+                        onChange={handleChange} 
+                        required 
+                        className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-gray-700 font-medium">Catégorie:</label>
+                    <input 
+                        type="text" 
+                        name="category" 
+                        value={artist.category} 
+                        onChange={handleChange} 
+                        required 
+                        className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-gray-700 font-medium">Type de vote:</label>
+                    <select 
+                        name="vote_type" 
+                        value={artist.vote_type} 
+                        onChange={handleChange} 
+                        className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    >
+                        <option value="free">Gratuit</option>
+                        <option value="paid">Payant</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label className="block text-gray-700 font-medium">Image:</label>
+                    <input 
+                        type="file" 
+                        name="image" 
+                        accept="image/*" 
+                        onChange={handleFileChange} 
+                        className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    />
+                </div>
+
+                <button 
+                    type="submit" 
+                    className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition duration-200"
+                >
+                    {id ? 'Modifier' : 'Ajouter'}
+                </button>
+            </form>
         </div>
+    );
+};
 
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Catégorie
-          </label>
-          <select
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          >
-            <option value="">Sélectionner une catégorie</option>
-            <option value="Musique">Musique</option>
-            <option value="Danse">Danse</option>
-            <option value="Comédie">Comédie</option>
-          </select>
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Pays
-          </label>
-          <select
-            name="country"
-            value={formData.country}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          >
-            <option value="">Sélectionner un pays</option>
-            <option value="Togo">Togo</option>
-            <option value="Bénin">Bénin</option>
-            <option value="Côte d'Ivoire">Côte d'Ivoire</option>
-          </select>
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Image
-          </label>
-          <input
-            type="file"
-            name="image"
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            accept="image/*"
-            {...(!id && { required: true })}
-          />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            {loading ? 'Chargement...' : (id ? 'Modifier' : 'Ajouter')}
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/admin/artists')}
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Annuler
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-}
-
-export default ArtistForm;
+export default AddArtistForm;

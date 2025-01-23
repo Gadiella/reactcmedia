@@ -102,7 +102,7 @@ function Home() {
             <img 
               src={banner1} 
               alt="Banner 1" 
-              className="w-screen h-[50vh] sm:h-[450px] object-fill"
+              className="Banner 1"className="w-screen h-[50vh] sm:h-[450px] object-fill"
             />
           </div>
           <div>

@@ -10,6 +10,7 @@ function VerifyEmail() {
   const { verifyEmail } = useAuth();
   const email = location.state?.email;
 
+  // Si l'email est absent, rediriger vers la page d'enregistrement
   if (!email) {
     navigate('/register');
     return null;
@@ -18,9 +19,12 @@ function VerifyEmail() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await verifyEmail({ email, code: verificationCode });
+      // Appel à la fonction de vérification du contexte avec la bonne clé
+      await verifyEmail({ email, verification_code: verificationCode });
+      // Rediriger vers la page de connexion après la vérification réussie
       navigate('/login');
     } catch (error) {
+      // Afficher l'erreur en cas de code de vérification invalide
       setError(error.response?.data?.message || 'Code de vérification invalide');
     }
   };

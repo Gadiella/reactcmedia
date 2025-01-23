@@ -17,15 +17,11 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(''); // Réinitialiser l'erreur avant d'envoyer la demande
     try {
       const response = await login(formData);
-      if (response.data.email_verified) {
-        navigate('/admin/artists');
-      } else {
-        // If email is not verified, redirect to verification page
-        navigate('/verify-email', { state: { email: formData.email } });
-        setError('Veuillez vérifier votre email avant de vous connecter.');
-      }
+      // Redirection vers /admin/artists sans vérification de l'email
+      navigate('/admin/artists');
     } catch (error) {
       setError(error.response?.data?.message || 'Email ou mot de passe incorrect');
     }

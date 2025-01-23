@@ -122,14 +122,14 @@ function Vote() {
   console.log('Artistes filtrés:', filteredArtists);
 
   return (
-    <div>
+    <div className="container mx-auto px-4 m-0">
       <div className="mb-8">
         <Slider {...sliderSettings}>
           <div>
             <img src={banner1} alt="Banner 1" className="w-screen h-[50vh] sm:h-[450px] object-fill" />
           </div>
           <div>
-            <img src={banner2} alt="Banner 2" className="w-screen h-[50vh] sm:h-[450px] object-fill" />
+            <img src={banner2} alt="Banner 2" className="w-screen h-[0vh] sm:h-[450px] object-fill" />
           </div>
         </Slider>
       </div>

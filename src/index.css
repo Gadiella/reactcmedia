@@ -2,18 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@300;400;500;600;700&display=swap');
-
+/* index.css or your custom CSS file */
+/* index.css or your custom CSS file */
+/* index.css or your custom CSS file */
 body {
-    font-family: 'Inknut Antiqua', serif;
-}
-
-h1, h2, h3 {
-    font-family: 'Inknut Antiqua', serif;
-    font-weight: 700;
-}
-
-p {
-    font-family: 'Inknut Antiqua', serif;
-    font-weight: 400;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  /* Apply to specific elements */
+/* Apply to specific elements */
+h1, h2, h3, p {
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  /* styles.css ou tailwind.config.js */
+.dark {
+  background-color: #1a202c;
+  color: #f7fafc;
 }

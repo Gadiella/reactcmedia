@@ -8,12 +8,13 @@ function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <div>
-            <img src={logo} alt="CmediaEVENTS" className="h-12 mb-4 mx-auto md:mx-0" />
-            <p className="text-sm mb-2 text-center md:text-left">Le seul endroit où chaque vote compte vraiment!</p>
-            <p className="text-sm text-center md:text-left">Encouragez vos stars préférées et contribuez à leur succès à chaque choix.</p>
+            <img src={logo} alt="CmediaEVENTS" className="h-12 mb-4" />
+            <p className="text-sm mb-2">Le seul endroit où chaque vote compte vraiment!</p>
+            <p className="text-sm">Encouragez vos stars préférées et contribuez
+               à leur succès à chaque choix.</p>
           </div>
           
-          {/* Section Contacts centrée au milieu */}
+          {/* Section Contacts centré au milieu */}
           <div className="flex flex-col justify-center items-center md:items-start">
             <h3 className="text-xl font-bold mb-4">Contacts</h3>
             <p className="mb-2">
